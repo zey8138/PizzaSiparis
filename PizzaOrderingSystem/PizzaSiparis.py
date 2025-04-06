@@ -1,180 +1,164 @@
-
 import datetime
 import csv
 
+# Menü dosyası oluşturuluyor
+with open("menü.txt", 'w', encoding='utf-8') as menü_file:
+    menü_file.write("* Lütfen Bir Pizza Tabanı Seçiniz:" +
+                    "\n1: Klasik" +
+                    "\n2: Margarita" +
+                    "\n3: TürkPizza" +
+                    "\n4: Sade Pizza" +
+                    "\n* ve seçeceğiniz sos:" +
+                    "\n11: Zeytin" +
+                    "\n12: Mantarlar" +
+                    "\n13: Keçi Peyniri" +
+                    "\n14: Et" +
+                    "\n15: Soğan" +
+                    "\n16: Mısır" +
+                    "\n* Teşekkür ederiz!")
 
-# menü dosyası oluşturma
-
-menü_file = open("menü.txt", 'w', encoding='utf-8')
-menü_file.write("* Lütfen Bir Pizza Tabanı Seçiniz:" +
-                 "\n1: Klasik" +
-                 "\n2: Margarita" +
-                 "\n3: TürkPizza" +
-                 "\n4: Sade Pizza" +
-                 "\n* ve seçeceğiniz sos:" +
-                 "\n11: Zeytin" +
-                 "\n12: Mantarlar" +
-                 "\n13: Keçi Peyniri" +
-                 "\n14: Et" +
-                 "\n15: Soğan" +
-                 "\n16: Mısır" +
-                 "\n* Teşekkür ederiz!")
-
-
+# Temel Pizza Sınıfı
 class Pizza:
-    def __init__(self,description,cost):
-        self.description =description
+    def __init__(self, description, cost):
+        self.description = description
         self.cost = cost
-    
+
     def get_cost(self):
         return self.cost
-    
+
     def get_description(self):
         return self.description
-    
 
-
-# pizzaların bilgileri burada olacak
-
+# Alt Pizza Sınıfları
 class KlasikPizza(Pizza):
     def __init__(self):
-      Pizza.__init__(self,"Pizza sosu, mozerella, sosis, sucuk, mantar, mısır içerir.", 150)
-    
+        super().__init__("Pizza sosu, mozerella, sosis, sucuk, mantar, mısır içerir.", 150)
+
 class MargaritaPizza(Pizza):
     def __init__(self):
-        Pizza.__init__(self,"Pizza sosu, mozerella, domates, fesleğen içerir.", 130)
-        
+        super().__init__("Pizza sosu, mozerella, domates, fesleğen içerir.", 130)
+
 class TürkPizza(Pizza):
     def __init__(self):
-        Pizza.__init__(self,"Pizza sosu, kaşar peyniri, sucuk, mantar, biber, soğan içerir.", 180)
+        super().__init__("Pizza sosu, kaşar peyniri, sucuk, mantar, biber, soğan içerir.", 180)
 
 class SadePizza(Pizza):
     def __init__(self):
-        Pizza.__init__(self,"Pizza sosu, mozerella içerir.", 120)
+        super().__init__("Pizza sosu, mozerella içerir.", 120)
 
-
-
-#sos başlangıcı
+# Decorator Sınıfı
 class Decorator(Pizza):
-    def __init__(self,component,description,cost):
-      self.component = component
-      self.cost = cost
-      self.description = description
-        
-    def get_cost(self):
-       return self.get_cost(self.component) + \
-         Pizza.get_cost(self)
+    def __init__(self, component, description, cost):
+        self.component = component
+        self.description = description
+        self.cost = cost
 
+    def get_cost(self):
+        return self.component.get_cost() + self.cost
 
     def get_description(self):
-       return self.get_description(self.component) + \
-         ' ' + Pizza.get_description(self)
-    
-    class Zeytin(Decorator):
+        return self.component.get_description() + " + " + self.description
+
+# Sos Sınıfları
+class Zeytin(Decorator):
     def __init__(self, component):
-      Decorator.__init__(self,component,"Zeytin",5)
+        super().__init__(component, "Zeytin", 5)
 
 class Mantar(Decorator):
     def __init__(self, component):
-        Decorator.__init__(self,component,"Mantar",20)
+        super().__init__(component, "Mantar", 20)
 
 class KeçiPeyniri(Decorator):
     def __init__(self, component):
-        Decorator.__init__(self,component,"Ekstra Mozzarella",40)
+        super().__init__(component, "Keçi Peyniri", 40)
 
 class Et(Decorator):
     def __init__(self, component):
-        Decorator.__init__(self,component,"Et",60)
+        super().__init__(component, "Et", 60)
 
 class Soğan(Decorator):
     def __init__(self, component):
-        Decorator.__init__(self,component,"Soğan",5)
+        super().__init__(component, "Soğan", 5)
 
 class Mısır(Decorator):
     def __init__(self, component):
-        Decorator.__init__(self,component,"Mısır",10)
+        super().__init__(component, "Mısır", 10)
 
-
-
+# Ana Fonksiyon
 def main():
-  
+    # Menü gösterimi
+    with open("menü.txt", "r", encoding="utf-8") as f:
+        print(f.read())
 
-    with open("menü.txt", "r",encoding="utf-8") as f:
-     menü_file = f.read()
-     print(menü_file)
-
-
-# Pizza seç:
-   
-    order = int(input("Menüden sipariş etmek istediğiniz pizza numarasını girin.: "))
-    while order in [1,2,3,4]:
-      if order == 1:
+    # Pizza seçimi
+    pizza_num = int(input("Menüden pizza numarasını giriniz: "))
+    if pizza_num == 1:
         choice = KlasikPizza()
-      elif order == 2:
+    elif pizza_num == 2:
         choice = MargaritaPizza()
-      elif order == 3:
+    elif pizza_num == 3:
         choice = TürkPizza()
-      elif order == 4:
+    elif pizza_num == 4:
         choice = SadePizza()
-      else:
-        print("Böyle bir ürün kodu sistemimizde bulunmuyor, tekrar deneyiniz.")
+    else:
+        print("Geçersiz seçim, program sonlandırıldı.")
+        return
 
+    # Sos seçimi
+    sos_num = int(input("Menüden sos numarasını giriniz: "))
+    if sos_num == 11:
+        choice = Zeytin(choice)
+    elif sos_num == 12:
+        choice = Mantar(choice)
+    elif sos_num == 13:
+        choice = KeçiPeyniri(choice)
+    elif sos_num == 14:
+        choice = Et(choice)
+    elif sos_num == 15:
+        choice = Soğan(choice)
+    elif sos_num == 16:
+        choice = Mısır(choice)
+    else:
+        print("Geçersiz sos seçimi, program sonlandırıldı.")
+        return
 
-toplamTutar = 0
-    sosSeçimi = int(input("Menüden eklemek istediğiniz pizza sosu numarasını girin.: "))
-    while sosSeçimi in [11,12,13,14,15,16]:
-        if sosSeçimi == 11:
-          description = Zeytin(choice).get_description()
-          toplamTutar += Zeytin(choice).get_cost()
-        elif sosSeçimi == 12:
-          description = Mantar(choice).get_description()
-          toplamTutar += Mantar(choice).get_cost()
-        elif sosSeçimi == 13:
-          description = KeçiPeyniri(choice).get_description()
-          toplamTutar += KeçiPeyniri(choice).get_cost()
-        elif sosSeçimi == 14:
-          description = Et(choice).get_description()
-          toplamTutar += Et(choice).get_cost()
-        elif sosSeçimi == 15:
-          description = Soğan(choice).get_description()
-          toplamTutar += Soğan(choice).get_cost()
-        elif sosSeçimi == 16:
-          description = Mısır(choice).get_description()
-          toplamTutar += Mısır(choice).get_cost()
-        else:
-          print("Böyle bir ürün kodu bulunmuyor, tekrar deneyiniz.")
-    
-    print("Sipariş bilgileri: ",toplamTutar,"TL",description)
-   
-    time = datetime.datetime.now()
-    date = datetime.datetime.strftime(time, '%c')
-  
-  # Ödeme Kısmı
+    # Sipariş özeti
+    description = choice.get_description()
+    total_cost = choice.get_cost()
+    print("\nSiparişiniz:", description)
+    print("Toplam Tutar: ₺", total_cost)
 
-    MüşteriAd = input("Lütfen isminizi girin.: ")
-    
-    TCKN = input("Lütfen TC kimlik numaranızı girin.: ")
-    while len(TCKN) != 11:
-        TCKN = input("Lütfen geçerli bir TC kimlik numarası girin.: ")
+    # Ödeme bilgileri
+    isim = input("\nLütfen adınızı girin: ")
+    tckn = input("Lütfen 11 haneli TCKN girin: ")
+    while len(tckn) != 11 or not tckn.isdigit():
+        tckn = input("Geçerli bir TCKN girin (11 haneli): ")
 
-    KartNo=input("Ödeme için lütfen kredi kartı numaranızı girin.: ")
-    while len(KartNo) != 16:
-        KartNo = input("Lütfen geçerli bir kredi kartı numarası girin.: ")
+    kart_no = input("Kredi kartı numaranızı girin (16 haneli): ")
+    while len(kart_no) != 16 or not kart_no.isdigit():
+        kart_no = input("Geçerli bir kart numarası girin (16 haneli): ")
 
-    Şifre = input("Lütfen kredi kartı şifrenizi girin: ")
-  
-    print("Sipariş Detayları ")
+    sifre = input("Kart şifrenizi girin: ")
 
-# database
-  
-    data = [{'İsim':MüşteriAd,'TCKN':TCKN,'CardNo':KartNo,'Şifre':Şifre,'Sipariş':description,'Tarih':date}]
-  
-    with open("Orders_Database.csv", "a") as file:  
-        writer = csv.DictWriter(file, fieldnames=['İsim','TCKN','KartNo','Şifre','Sipariş','Tarih'])
-        writer.writerows(data)
-        file.close()
-        
+    tarih = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # CSV'ye yazma
+    with open("Orders_Database.csv", "a", newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=["İsim", "TCKN", "KartNo", "Şifre", "Sipariş", "Tarih"])
+        writer.writerow({
+            "İsim": isim,
+            "TCKN": tckn,
+            "KartNo": kart_no,
+            "Şifre": sifre,
+            "Sipariş": description,
+            "Tarih": tarih
+        })
+
+    print("\nSiparişiniz başarıyla alınmıştır, teşekkür ederiz!")
+
+# Programı çalıştır
 main()
+
 
 
              
